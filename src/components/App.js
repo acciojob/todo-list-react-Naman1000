@@ -1,91 +1,70 @@
 
 import React, { useState } from "react";
 
-const App = () => {
+function App() {
+  const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
-  const [text, setText] = useState("");
   const [editIndex, setEditIndex] = useState(null);
   const [editText, setEditText] = useState("");
 
-  // Add Task
-  const handleAdd = (e) => {
-    e.preventDefault();
-    if (text.trim() === "") return;
-    setTasks([...tasks, text.trim()]);
-    setText("");
+  const addTask = () => {
+    if (task.trim() === "") return;
+    setTasks([...tasks, { text: task }]);
+    setTask("");
   };
 
-  // Delete Task
   const handleDelete = (index) => {
-    const updated = tasks.filter((_, i) => i !== index);
-    setTasks(updated);
+    const newTasks = tasks.filter((_, i) => i !== index);
+    setTasks(newTasks);
   };
 
-  // Edit Task
   const handleEdit = (index) => {
     setEditIndex(index);
-    setEditText(tasks[index]);
+    setEditText(tasks[index].text);
   };
 
-  // Save Edited Task
   const handleSave = (index) => {
-    if (editText.trim() === "") return;
-    const updated = [...tasks];
-    updated[index] = editText.trim();
-    setTasks(updated);
+    const newTasks = [...tasks];
+    newTasks[index].text = editText;
+    setTasks(newTasks);
     setEditIndex(null);
-    setEditText("");
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>To-Do List</h2>
-
-      {/* Add Task Section */}
-      <form className="add_tasks_section" onSubmit={handleAdd}>
+    <div>
+      {/* ✅ Add Task Section */}
+      <div className="add_tasks_section">
+        <h3>To-Do List</h3>
         <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Enter a task"
-          style={{ width: "300px", height: "60px" }}
-        />
-        <button type="submit">Add Task</button>
-      </form>
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+          placeholder="Enter task"
+        ></textarea>
+        <button onClick={addTask}>Add Task</button>
+      </div>
 
-      {/* Tasks Section */}
-      <div className="tasks_section" style={{ marginTop: "20px" }}>
-        {tasks.map((task, index) => (
+      {/* ✅ Tasks Section */}
+      <div className="tasks_section">
+        {tasks.map((t, index) => (
           <div className="task" key={index}>
             {editIndex === index ? (
               <>
-                <textarea
+                <input
+                  type="text"
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
-                  style={{ width: "250px", height: "40px" }}
                 />
-                <button
-                  className="save"
-                  onClick={() => handleSave(index)}
-                  style={{ marginLeft: "10px" }}
-                >
+                <button className="save" onClick={() => handleSave(index)}>
                   Save
                 </button>
               </>
             ) : (
               <>
-                <span>{task}</span>
-                <button
-                  className="edit"
-                  onClick={() => handleEdit(index)}
-                  style={{ marginLeft: "10px" }}
-                >
+                <span>{t.text}</span>
+                <button className="edit" onClick={() => handleEdit(index)}>
                   Edit
                 </button>
-                <button
-                  className="delete"
-                  onClick={() => handleDelete(index)}
-                  style={{ marginLeft: "10px" }}
-                >
+                <button className="delete" onClick={() => handleDelete(index)}>
                   Delete
                 </button>
               </>
@@ -95,6 +74,6 @@ const App = () => {
       </div>
     </div>
   );
-};
+}
 
 export default App;
